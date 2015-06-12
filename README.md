@@ -9,8 +9,8 @@ On pourra trouver leds et résistances sur Conrad.
 Jouer avec des boutons poussoirs : http://mchobby.be/wiki/index.php?title=Rasp-Hack-PiButton
 autre tuto : http://nagashur.com/wiki/doku.php?id=raspberry_pi:gpio_entree
 
-----------------------------------------------------
------------------    Board Design    --------------- 
+---------------------------------------------------------------------------------------------------------------
+-----------------    Board Design (see in raw mode)   --------------- 
 
 -----------------------------
 |                       o 1  |            1 : Green Led = everything is OK 
