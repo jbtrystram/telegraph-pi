@@ -7,7 +7,9 @@ Leds and Resistors
 Calcul de la résistance : http://users.telenet.be/h-consult/elec/led.htm     (GPIO is 3.3V out)
 On pourra trouver leds et résistances sur Conrad.
 Jouer avec des boutons poussoirs : http://mchobby.be/wiki/index.php?title=Rasp-Hack-PiButton
-autre tuto : http://nagashur.com/wiki/doku.php?id=raspberry_pi:gpio_entree
+autre tuto : http://nagashur.com/wiki/doku.php?id=raspberry_pi:
+
+Boutons + résistances http://shop.mchobby.be/minikits/39-bouton-tactile-mini-kit-3232100000391.html?search_query=bouton&results=110
 
 ---------------------------------------------------------------------------------------------------------------
 -----------------    Board Design (see in raw mode)   --------------- 
