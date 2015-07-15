@@ -21,7 +21,7 @@ GPIO.output(18, False)
 GPIO.output(16, False)
 
 host = '192.168.1.124' #Pc de Jib
-port = 50003
+port = 50009
 size = 1024 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 s.connect((host,port))
@@ -39,21 +39,33 @@ def switch_led_Ta() :
 while 1:
 
     if GPIO.input(13):
-            switch_led_Ti()
-            s.send('ti')
-            sleep(0.25)
-            switch_led_Ti()
+            sleep(0.10)
+            if (GPIO.input(15) and GPIO.input(13)):
+                    switch_led_Ta()
+                    switch_led_Ti()
+                    s.send('slash')
+                    sleep(0.25)
+                    switch_led_Ta()
+                    switch_led_Ti()
+            else:
+                switch_led_Ti()
+                s.send('ti')
+                sleep(0.25)
+                switch_led_Ti()
+    
     elif GPIO.input(15):
-            switch_led_Ta()
-            s.send('ta')
-            sleep(0.25)
-            switch_led_Ta()
-    elif (GPIO.input(15) and GPIO.input(13)):
+        sleep(0.10)
+        if (GPIO.input(15) and GPIO.input(13)):
             switch_led_Ta()
             switch_led_Ti()
             s.send('slash')
             sleep(0.25)
             switch_led_Ta()
             switch_led_Ti()
+        else:
+            switch_led_Ta()
+            s.send('ta')
+            sleep(0.25)
+            switch_led_Ta()
     
 s.close() 
