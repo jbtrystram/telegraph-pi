@@ -1,5 +1,5 @@
 # telegraph-pi
-A simple to project to create a Telegraph between two raspberrys
+A simple to project to create a Telegraph between two raspberrys with websockets
 
 Hardware : rapsberry pi 
 Slice of pi : http://shop.ciseco.co.uk/slice-of-pi-add-on-for-raspberry-pi/
@@ -24,3 +24,8 @@ Boutons + résistances http://shop.mchobby.be/minikits/39-bouton-tactile-mini-ki
 |                            |         5 : Red Led : what you just send (ti or ta)
 |                            |         6 : push button : send a Ta
 -----------------------------
+
+
+SIDES NOTES : 
+For web socket to works, you need to add these to python : 
+sudo pip install websocket-client tornado
