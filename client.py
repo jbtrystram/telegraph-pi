@@ -2,6 +2,7 @@
 
 #!/usr/bin/env python 
 
+#import tty, sys, termios
 import RPi.GPIO as GPIO
 from time import sleep
 #websocket
@@ -24,6 +25,20 @@ GPIO.output(7, False)
 GPIO.output(22, False)
 GPIO.output(18, False)
 GPIO.output(16, False)
+
+def blink_receiv(rcv):
+    GPIO.output(16, False)
+    sleep(0.25)
+    GPIO.output(16, True)
+    sleep(0.15)
+    GPIO.output(16, False)
+    sleep(0.25)
+    GPIO.output(16, True)
+    sleep(0.15)
+    GPIO.output(16, False)
+    sleep(0.20)
+    if (rcv) : GPIO.output(16, True)
+
 
 
 def switch_led_Ti() :
@@ -49,6 +64,7 @@ def sendMorse (ws):
     ws.send('ready to send')
     leave=""
     while (leave != "switch") :
+        if (leave == 'q') : quit()
         if GPIO.input(13):
             sleep(0.09)
             if (GPIO.input(15) and GPIO.input(13)):
@@ -70,21 +86,24 @@ def sendMorse (ws):
                 ws.send('_')
                 led_output('ta')
                 leave = ws.recv()
-                print leave
-        
+    print ("switch recevied L88")
+    blink_receiv(True)
     receiveMorse(ws)
 
 def receiveMorse(ws) :
     message = ""
     ws.send('ready to rcv')
     while (message != 'q'):
+        print ('waiting msg')
         message = ws.recv()
         if (message == 'switch') :
-            GPIO.output(16, False) #éteindre le Témoin de réception
+            print ("switch recevied!")
+            blink_receiv(False)
             sendMorse(ws)
         else :
             print (format(message)),
             led_output(format(message))
+    ws.close()
     quit()
 
 def quit() :

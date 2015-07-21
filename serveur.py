@@ -9,23 +9,35 @@ import signal
 port = 50003
 host = '192.168.1.124'
 
+send_mode = ""
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-    	signal.signal(signal.SIGTSTP, self.switch_transmission_mode)
-  
+    	
+    	#switch mode
+    	def switch_transmission_mode(frame, signums):
+    		global send_mode
+        	self.write_message('switch')
+        	send_mode = not send_mode
+        	print ('APPUYER SUR ENTREE')
+
+  	signal.signal(signal.SIGTSTP, switch_transmission_mode)
+
     def on_message(self, message):
-    #    self.write_message(u"Your message was: " + message)
+    	global send_mode
+        if (message not in {'.', '_', 'slash'} ): print (message)
         if (message == 'Hello'):
             print("Le client demande quoi faire! ")
             print("   e : lui envoyer du morse.")
             print("   r : les laisser envoyer du morse.")
             while True :
             	order = raw_input()
-            	if (order == 'e') : 
+            	if (order == 'e') :
+            		send_mode = True; 
                 	self.write_message('recv')
                 	break
-            	elif (order == 'r') : 
+            	elif (order == 'r') :
+            		send_mode = False; 
                 	self.write_message('send')
                 	break
                 else :
@@ -49,10 +61,11 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     #send
     def sendMorse(self):
+    	global send_mode
     	print("OK c'est parti ! i = TI et a = TA, s pour SLASH, q pour quitter.")
-        print('CTRL+Z demandera aux scouts de repondre')
+        print('CTRL+Z proposera aux scouts de repondre')
         char = ""
-        while (char != 'q'):
+        while (char != 'q' and send_mode == True):
             char = raw_input()
             if char == 'i' :
                 self.write_message('ti')
@@ -64,26 +77,18 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.write_message('slash')
                 print ('/'),
             elif char == 'q' :
-                self.write_message('stop')
+                self.write_message('q')
             else :
                 print ('invalid key')
 
-                       
-    #switch mode
-    def switch_transmission_mode(signal, frame, self):
-        self.write_message('switch')
-
- 
     def on_close(self):
-        pass
- 
- 
+        exit(0)
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r'/websocket', WebSocketHandler)
         ]
-
         tornado.web.Application.__init__(self, handlers)
 
   
@@ -95,5 +100,5 @@ if __name__ == '__main__':
     server.listen(port, host)
     tornado.ioloop.IOLoop.instance().start()
 
-    
+    exit(0)
         
