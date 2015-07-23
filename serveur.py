@@ -5,9 +5,14 @@ import tornado.websocket
 import tornado.httpserver
 import tornado.ioloop
 import signal
+import sys
+import os
 
 port = 50003
 host = '10.0.0.1'
+
+################ DEFINITION DE LA PATROUILLE 
+pat = "LION"
 
 send_mode = ""
 
@@ -62,15 +67,15 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     #send
     def sendMorse(self):
     	global send_mode
-    	print("OK c'est parti ! i = TI et a = TA, s pour SLASH, q pour quitter.")
+    	print("OK c'est parti ! a = TI, e = TA, s = SLASH, q = quitter.")
         print('CTRL+Z proposera aux scouts de repondre')
         char = ""
         while (char != 'q' and send_mode == True):
             char = raw_input()
-            if char == 'i' :
+            if char == 'a' :
                 self.write_message('ti')
                 print ('.'),
-            elif char == 'a' :
+            elif char == 'e' :
                 self.write_message('ta')
                 print ('_'),
             elif char == 's' :
@@ -94,7 +99,10 @@ class Application(tornado.web.Application):
   
   
 if __name__ == '__main__':
-    
+
+    sys.stdout.write("\x1b]2;"+pat+"\x07")
+    os.system("setterm -background red -foreground white")
+
     ws_app = Application()
     server = tornado.httpserver.HTTPServer(ws_app)
     server.listen(port, host)

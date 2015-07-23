@@ -5,7 +5,7 @@
 #import tty, sys, termios
 import RPi.GPIO as GPIO
 from time import sleep
-#websocket
+import os
 import websocket
 
 port = '50003'
@@ -124,8 +124,16 @@ if __name__ == "__main__":
 	
     i = 0
     while (i<3):
-        if ping(host) : i++
+        if ping(dest) : 
+            i=i+1
+            GPIO.output(7, True)
+            sleep(0.08*i)
+            GPIO.output(7,False)
         else : i=0
+
+    GPIO.output(7, True)
+    sleep(0.5)
+    GPIO.output(7,False)
 
     websocket.enableTrace(True)
     ws = websocket.create_connection("ws://"+dest+":"+port+"/websocket")
