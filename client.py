@@ -26,6 +26,13 @@ GPIO.output(22, False)
 GPIO.output(18, False)
 GPIO.output(16, False)
 
+
+def ping (host):
+	con = os.system('ping -c 1 '+host)
+	if (con == 0): return True
+	else : return False
+
+
 def blink_receiv(rcv):
     GPIO.output(16, False)
     sleep(0.25)
@@ -114,6 +121,12 @@ def quit() :
     exit(0)
 
 if __name__ == "__main__":
+	
+    i = 0
+    while (i<3):
+        if ping(host) : i++
+        else : i=0
+
     websocket.enableTrace(True)
     ws = websocket.create_connection("ws://"+dest+":"+port+"/websocket")
     

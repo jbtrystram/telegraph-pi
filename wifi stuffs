@@ -23,6 +23,8 @@ ifconfig wlan0 up
 apt-get install wpasupplicant
 
 #add to /etc/network/interfaces
+# ETH0 SECTION NEEDS TO BE COMMENTED IN ORDER TO 
+#GET WIFI WITHOUT RJ45
 auto wlan0
 allow-hotplug wlan0
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
@@ -48,5 +50,13 @@ network={
     priority=5
 }
 
-#LAST COMMAND WORKS
-https://kerneldriver.wordpress.com/2012/10/21/configuring-wpa2-using-wpa_supplicant-on-the-raspberry-pi/
+#AUTORISER LE SSH VIA LE WIFI :
+#/etc/ssh/sshd_config
+#uncomment
+listen 0.0.0.0
+
+
+
+
+#SCRIPT DE DEMARRAGE AUTO :voir wifi_start
+
