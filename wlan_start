@@ -1,0 +1,15 @@
+#! /bin/sh
+# /etc/init.d/wifi_start
+#
+
+# enable interface
+ifconfig wlan0 up
+
+#start wpa supplicant
+/sbin/wpa_supplicant -P /var/run/wpa_supplicant.wlan0.pid -i wlan0 -D nl80211,w$
+
+#assign an ip to wlan0
+ifconfig wlan0 10.0.0.2
+
+#start the python software
+

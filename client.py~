@@ -9,7 +9,7 @@ from time import sleep
 import websocket
 
 port = '50003'
-dest = '10.0.0.1'
+dest = '192.168.0.17'
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(7,GPIO.OUT) # LED OK
