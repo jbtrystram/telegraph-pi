@@ -8,7 +8,7 @@ import signal
 import sys
 import os
 
-port = 50003
+port = 50000
 host = '10.0.0.1'
 
 ################ DEFINITION DE LA PATROUILLE 
@@ -100,8 +100,21 @@ class Application(tornado.web.Application):
   
 if __name__ == '__main__':
 
-    sys.stdout.write("\x1b]2;"+pat+"\x07")
-    os.system("setterm -background red -foreground white")
+    if (sys.argv(1) == "lion") :
+        sys.stdout.write("\x1b]2;"+'LION'+"\x07")
+        os.system("setterm -background red -foreground white")
+        port = 50002
+    elif (sys.arg(1) == "gerfaut") :
+        sys.stdout.write("\x1b]2;"+'GERFAUT'+"\x07")
+        os.system("setterm -background blue -foreground black")
+        port = 50003
+    elif (sys.arg(1) == "guepard") :
+        sys.stdout.write("\x1b]2;"+'GUEPARD'+"\x07")
+        os.system("setterm -background black -foreground yellow")
+        port = 50004
+    else :
+        print ('usage : python server.py {lion|gerfaut|guepard}')
+        exit(1)
 
     ws_app = Application()
     server = tornado.httpserver.HTTPServer(ws_app)
