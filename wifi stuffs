@@ -1,15 +1,40 @@
-monitor wifi signal python using subprocess & bash
-https://www.calazan.com/how-to-continuously-monitor-your-wi-fis-signal-strength-in-ubuntu/
+#increase the partition size
+#####################################On  another computer
+
+#find the sd card
+df -h
+umount
+
+sudo parted /dev/sdX
+(parted)unit chs
+(parted print)
+(parted)rm X
+(parted)mkpart primary 1527,0,0 62031,3,15
+(parted)quit
+
+#grow the fs
+sudo e2fsck -f /dev/sde2
+sudo resize2fs /dev/sde2
+################################ back on the pi
 
 #Install python & required python libs
+apt-get update
+apt-get upgrade
+apt-get install python-pip python usbutils curl wireless-tools usbutils firmware-atheros wireless-tools usbutils wpasupplicant nano
 
 
-#update firmware
+#install tornado
+pip install websocket-client tornado
 
+#update pi 
+wget http://goo.gl/1BOfJ
+mv 1BOfJ rpi-update
+cp rpi-update /usr/bin/
+chmod +x /usr/bin/rpi-update 
+rpi-update
 
 
 #Install wifi driver for WN722N
-apt-get install wireless-tools usbutils firmware-atheros
 wget http://linuxwireless.org/download/htc_fw/1.3/htc_9271.fw
 cp htc_9271.fw /lib/firmware
 reboot
@@ -19,16 +44,12 @@ ifconfig wlan0 up
 
 #Make the wifi to have a static adress & connect automatically our SSID
 
-#install wpa_supplicant
-apt-get install wpasupplicant
-
 #add to /etc/network/interfaces
 # ETH0 SECTION NEEDS TO BE COMMENTED IN ORDER TO 
 #GET WIFI WITHOUT RJ45
 auto wlan0
 allow-hotplug wlan0
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-#address 
+#wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 iface wlan0 inet static
   address 10.0.0.2
   netmask 255.255.255.0
@@ -53,10 +74,14 @@ network={
 #AUTORISER LE SSH VIA LE WIFI :
 #/etc/ssh/sshd_config
 #uncomment
-listen 0.0.0.0
-
-
+ListenAdress 0.0.0.0
+service ssh restart 
 
 
 #SCRIPT DE DEMARRAGE AUTO :voir wifi_start
+update-rc.d wlan_start
+#crontab pour lancer le programme python : 
+#!/bin/sh
 
+cd /root/
+python client.py
