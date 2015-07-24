@@ -118,6 +118,7 @@ def quit() :
     GPIO.output(22, False)
     GPIO.output(18, False)
     GPIO.output(16, False)
+    os.system('halt')
     exit(0)
 
 if __name__ == "__main__":
