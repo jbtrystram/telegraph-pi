@@ -100,15 +100,15 @@ class Application(tornado.web.Application):
   
 if __name__ == '__main__':
 
-    if (sys.argv(1) == "lion") :
+    if (sys.argv[1] == "lion") :
         sys.stdout.write("\x1b]2;"+'LION'+"\x07")
         os.system("setterm -background red -foreground white")
         port = 50002
-    elif (sys.arg(1) == "gerfaut") :
+    elif (sys.argv[1] == "gerfaut") :
         sys.stdout.write("\x1b]2;"+'GERFAUT'+"\x07")
         os.system("setterm -background blue -foreground black")
         port = 50003
-    elif (sys.arg(1) == "guepard") :
+    elif (sys.argv[1] == "guepard") :
         sys.stdout.write("\x1b]2;"+'GUEPARD'+"\x07")
         os.system("setterm -background black -foreground yellow")
         port = 50004
