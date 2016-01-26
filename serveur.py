@@ -1,4 +1,5 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
+# coding: utf8
 
 import tornado.web
 import tornado.websocket
@@ -7,87 +8,55 @@ import tornado.ioloop
 import signal
 import sys
 import os
+import socket
+import subprocess
 
 port = 50000
 host = '10.0.0.1'
 
-################ DEFINITION DE LA PATROUILLE 
-pat = "LION"
 
-send_mode = ""
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    def open(self):
-    	
-    	#switch mode
-    	def switch_transmission_mode(frame, signums):
-    		global send_mode
-        	self.write_message('switch')
-        	send_mode = not send_mode
-        	print ('APPUYER SUR ENTREE')
+    def ping(host):
+        con = os.system('ping -c 1 ' + host)
+        if (con == 0):
+            return True
+        else:
+            return False
 
-  	signal.signal(signal.SIGTSTP, switch_transmission_mode)
+    def dns(domain):
+        return socket.gethostbyname(domain)
+
+    def routes():
+		process = subprocess.Popen(['route', '-n'], stdout=subprocess.PIPE)
+		out, err = process.communicate()
+		return(out)
 
     def on_message(self, message):
-    	global send_mode
-        if (message not in {'.', '_', 'slash'} ): print (message)
-        if (message == 'Hello'):
-            print("Le client demande quoi faire! ")
-            print("   e : lui envoyer du morse.")
-            print("   r : les laisser envoyer du morse.")
-            while True :
-            	order = raw_input()
-            	if (order == 'e') :
-            		send_mode = True; 
-                	self.write_message('recv')
-                	break
-            	elif (order == 'r') :
-            		send_mode = False; 
-                	self.write_message('send')
-                	break
-                else :
-                	print("Attention mauvaise saisie! ")
-                
-        elif (message == 'ready to rcv'):
-        	self.sendMorse()      	
+        print message
+        ping_flag = False
+		dns_flag = False
+		print (message)
+        if message == 'Hello':
+            print("La sonde est connectée. Attente d'une commande.")
 
-       	elif (message == 'ready to send'):
-       		print("LES SCOUTS TRANSMETTENT")
-        	print('CTRL+Z reprendra la main sur la transmission')
-        
-        else :
-        	if (message == 'slash') :
-        		print ('/')
-        	else :
-        		print (message),
-        	self.write_message('ack')
+        elif message == 'ping':
+            ping_flag = True
+        elif (ping_flag is True) and (isValidIP(message)):
+            self.write(ping(message))
+            ping_flag = False
 
+        elif message == 'dns':
+            dns_flag = True
+        elif dns_flag is True and isValidDomaine(message):
+            self.write(dns(message))
+            dns_flag = False
 
+        elif message == 'routing_table':
+            self.write(routes())
+        else:
+            print ('unknown command')
 
-    #send
-    def sendMorse(self):
-    	global send_mode
-    	print("OK c'est parti ! a = TI, e = TA, s = SLASH, q = quitter.")
-        print('CTRL+Z proposera aux scouts de repondre')
-        char = ""
-        while (char != 'q' and send_mode == True):
-            char = raw_input()
-            if char == 'a' :
-                self.write_message('ti')
-                print ('.'),
-            elif char == 'e' :
-                self.write_message('ta')
-                print ('_'),
-            elif char == 's' :
-                self.write_message('slash')
-                print ('/'),
-            elif char == 'q' :
-                self.write_message('q')
-            else :
-                print ('invalid key')
-
-    def on_close(self):
-        exit(0)
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -96,30 +65,11 @@ class Application(tornado.web.Application):
         ]
         tornado.web.Application.__init__(self, handlers)
 
-  
-  
+
 if __name__ == '__main__':
-
-    if (sys.argv[1] == "lion") :
-        sys.stdout.write("\x1b]2;"+'LION'+"\x07")
-        os.system("setterm -background red -foreground white")
-        port = 50002
-    elif (sys.argv[1] == "gerfaut") :
-        sys.stdout.write("\x1b]2;"+'GERFAUT'+"\x07")
-        os.system("setterm -background blue -foreground black")
-        port = 50003
-    elif (sys.argv[1] == "guepard") :
-        sys.stdout.write("\x1b]2;"+'GUEPARD'+"\x07")
-        os.system("setterm -background black -foreground yellow")
-        port = 50004
-    else :
-        print ('usage : python server.py {lion|gerfaut|guepard}')
-        exit(1)
-
     ws_app = Application()
     server = tornado.httpserver.HTTPServer(ws_app)
     server.listen(port, host)
     tornado.ioloop.IOLoop.instance().start()
 
     exit(0)
-        
