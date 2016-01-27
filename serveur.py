@@ -12,48 +12,57 @@ import socket
 import subprocess
 
 port = 50000
-host = '10.0.0.1'
-
+host = '127.0.0.1'
 
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    def ping(host):
+    ping_flag = False
+    dns_flag = False
+    def ping(self, host):
         con = os.system('ping -c 1 ' + host)
         if (con == 0):
-            return True
+            return "OK"
         else:
-            return False
+            return "NOK"
 
-    def dns(domain):
+    def dns(self, domain):
         return socket.gethostbyname(domain)
 
     def routes():
-		process = subprocess.Popen(['route', '-n'], stdout=subprocess.PIPE)
-		out, err = process.communicate()
-		return(out)
+        process = subprocess.Popen(['route', '-n'], stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        return(out)
+
+    def isValidIP(self, addr):
+        try:
+            socket.inet_aton(addr)
+            return addr
+        except socket.error:
+            help("noServerIp")
 
     def on_message(self, message):
         print message
         ping_flag = False
-		dns_flag = False
-		print (message)
+        dns_flag = False
         if message == 'Hello':
             print("La sonde est connectée. Attente d'une commande.")
 
         elif message == 'ping':
-            ping_flag = True
-        elif (ping_flag is True) and (isValidIP(message)):
-            self.write(ping(message))
-            ping_flag = False
+            self.ping_flag = True
+            print ('flag set')
+        elif self.ping_flag:
+            print("je pingue mon brave")
+            self.write_message(self.ping(message))
+            self.ping_flag = False
 
         elif message == 'dns':
-            dns_flag = True
-        elif dns_flag is True and isValidDomaine(message):
-            self.write(dns(message))
-            dns_flag = False
+            self.dns_flag = True
+        elif self.dns_flag	:
+            self.write_message(dns(message))
+            self.dns_flag = False
 
         elif message == 'routing_table':
-            self.write(routes())
+            self.write_message(routes())
         else:
             print ('unknown command')
 

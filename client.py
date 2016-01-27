@@ -6,6 +6,7 @@
 from time import sleep
 import os
 import websocket
+import socket
 
 port = '50000'
 dest = '10.0.0.1'
@@ -50,9 +51,6 @@ if __name__ == "__main__":
     ws.send("Hello")
     #then send the command we want
     while True :
-        ip
-        dns
-        choice
         print("-------------------------------------------")
         print("1. Tester la connectivitée réseau.")
         print("2. Tester le DNS.")
@@ -61,27 +59,29 @@ if __name__ == "__main__":
 
         choice = raw_input()
 
-        if (choice == "1") :
+        if choice == "1" :
             print("Entrez une IP")
             print("-------------")
             ip = raw_input()
-            print(ip);
+            print(ip)
             if isValidIP(ip):
-                self.write_message('ping')
+                ws.send('ping')
+                ws.send(ip)
                 print (ws.recv())
-            else: print("l'IP entrée n'est pas valide")
-
-            elif (choice == "2") :
+            else:
+                print("l\'IP entrée n'est pas valide")
+        elif choice == "2":
                 print("Entrez une IP ou un nom de domaine")
                 print("----------------------------------")
                 dns = raw_input()
-                print(dns);
-                self.write_message('dns')
+                #print(dns);
+                ws.send('dns')
+                ws.send(dns)
                 print (ws.recv())
 
-                elif(choice == "3") :
+        elif(choice == "3") :
                   print("Table de routageR")
-                  self.write_message('routing_table')
+                  ws.send('routing_table')
                   print (ws.recv())
-                else :
+        else :
                   printf("Entrez 1, 2 ou 3.")
